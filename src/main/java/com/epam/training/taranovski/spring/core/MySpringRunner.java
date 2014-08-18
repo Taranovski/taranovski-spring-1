@@ -5,6 +5,7 @@
  */
 package com.epam.training.taranovski.spring.core;
 
+import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
 import com.epam.training.taranovski.spring.interfaces.GreetingService;
 
 /**
