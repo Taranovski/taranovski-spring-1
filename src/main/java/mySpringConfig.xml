@@ -4,8 +4,27 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
    
-    <bean id="greetingService" class="com.epam.training.taranovski.spring.classes.GreetingServiceImpl">
-        <constructor-arg value="Hello World!" />
+    <bean 
+	id="GreetingService" 
+	class="com.epam.training.taranovski.spring.classes.GreetingServiceImpl" type="singleton" >
+        <constructor-arg type="string" value="Hello World!" />
+		<constructor-arg type="custom" ref="SomeBean" />
     </bean>
+	<bean 
+	id="SomeBean" 
+	class="com.epam.training.taranovski.spring.classes.SomeBean" 
+	type = "common">
+		<constructor-arg type="custom" ref="..." />
+		<property name="..." type="string" value="blah" />
+		<property name="..." type="custom" ref="SomeBean1" />		
+	</bean>
+	<bean 
+	id="SomeBean1" 
+	class="com.epam.training.taranovski.spring.classes.SomeBean1" 
+	type = "common">
+		<constructor-arg type="custom" ref="..." />
+		<property name="..." type="string" value="blah" />
+		<property name="..." type="custom" ref="..." />		
+	</bean>
 
 </beans>
