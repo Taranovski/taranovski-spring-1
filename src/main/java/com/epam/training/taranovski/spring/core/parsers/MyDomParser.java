@@ -20,7 +20,7 @@ import org.w3c.dom.NodeList;
  *
  * @author Admin
  */
-public class MyDomParser {
+public class MyDomParser implements MyParser {
 
     List<Gem> list = new ArrayList();
 
@@ -38,6 +38,7 @@ public class MyDomParser {
      *
      * @param fileName file to parse
      */
+    @Override
     public void parse(String fileName) {
         try {
             //create new document builder factory

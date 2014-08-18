@@ -16,7 +16,7 @@ import org.xml.sax.SAXException;
  *
  * @author Alex
  */
-public class MySaxParser {
+public class MySaxParser implements MyParser {
 /**
  * parse function
  * @param fileName file to parse
@@ -24,6 +24,7 @@ public class MySaxParser {
  * @throws SAXException
  * @throws IOException 
  */
+    @Override
     public void parse(String fileName) throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();

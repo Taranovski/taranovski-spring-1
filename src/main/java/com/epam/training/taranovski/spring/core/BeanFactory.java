@@ -11,9 +11,21 @@ package com.epam.training.taranovski.spring.core;
  */
 public interface BeanFactory {
 
+    /**
+     *
+     * @param string
+     * @return
+     */
     public Object getBean(String string);
 //- создает экземпляр класса типа Object прописанного в конфигурационном xml-файле по его id
 
+    /**
+     *
+     * @param <T>
+     * @param string
+     * @param type
+     * @return
+     */
     public <T extends Object> T getBean(String string, Class<T> type);
 //- создает экземпляр класса типа T прописанного в конфигурационном xml-файле по его id
 }

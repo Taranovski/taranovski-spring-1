@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Alex
  */
-public class MyStaxParser {
+public class MyStaxParser implements MyParser {
 
     List<Gem> list = new ArrayList();
     Gem currentGem;
