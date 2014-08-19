@@ -20,12 +20,12 @@ public class MySpringRunner {
      */
     public static void main(String[] args) {
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
-        context.load("SpringXMLConfig.xml");
         context.setValidating(true);
-        context.setParserType(ParserTypes.StAX);
+        context.setParserType(ParserTypes.DOM);
+        context.load("SpringXMLConfig.xml");
 
         BeanFactory factory = context.getBeanFactory();
         GreetingService greetingService = factory.getBean("greetingService", GreetingService.class);
-        
+
     }
 }

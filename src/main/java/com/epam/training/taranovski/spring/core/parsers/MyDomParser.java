@@ -4,17 +4,19 @@
  */
 package com.epam.training.taranovski.spring.core.parsers;
 
+import com.epam.training.taranovski.spring.core.Bean;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.DOMException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -22,14 +24,14 @@ import org.w3c.dom.NodeList;
  */
 public class MyDomParser implements MyParser {
 
-    List<Gem> list = new ArrayList();
+    List<Bean> list = new LinkedList();
 
     /**
      * get list of gems
      *
      * @return list of gems
      */
-    public List<Gem> getList() {
+    public List<Bean> getList() {
         return list;
     }
 
@@ -50,111 +52,73 @@ public class MyDomParser implements MyParser {
             //defining root element
             Element root = document.getDocumentElement();
             //next function for parsing objects from list
-            parseGems(root.getChildNodes());
+            parseBeans(root.getChildNodes());
 
-        } catch (Exception ex) {
+        } catch (IOException | ParserConfigurationException | SAXException ex) {
             ex.printStackTrace();
         }
     }
 
     /**
-     * parse a list of gems
+     * parse a list of beans
      *
-     * @param gems nodelist of gems
+     * @param beans node list of beans
      */
-    private void parseGems(NodeList gems) {
+    private void parseBeans(NodeList beans) {
 
-        for (int i = 0; i < gems.getLength(); i++) {
-            Node gemItem = gems.item(i);
-            if (gemItem.getNodeName().equals(GEM.toString())) {
-                parseGem(gemItem);
+        for (int i = 0; i < beans.getLength(); i++) {
+            Node gemItem = beans.item(i);
+            if ("bean".equals(gemItem.getNodeName())) {
+                parseBean(gemItem);
             }
         }
     }
 
     /**
-     * parse one gem
+     * parse one bean
      *
-     * @param gemItem gem to parse
+     * @param gemItem bean to parse
      * @throws NumberFormatException
      * @throws DOMException
      */
-    public void parseGem(Node gemItem) throws NumberFormatException, DOMException {
-        Node gemElement = gemItem;
-        Gem gemEntity = new Gem();
-        VisualParameters vis;
+    public void parseBean(Node gemItem) throws NumberFormatException, DOMException {
+        Node beanElement = gemItem;
+        Bean beanEntity = new Bean();
 
-        parseAttributes(gemEntity, gemElement);
+        beanEntity.setBeadId(beanElement.getAttributes().getNamedItem("id").getNodeValue());
+        beanEntity.setClassName(beanElement.getAttributes().getNamedItem("class").getNodeValue());
 
-        NodeList nodeList = gemElement.getChildNodes();
-        parseTags(nodeList, gemEntity);
+        NodeList diff = beanElement.getChildNodes();
 
-        list.add(gemEntity);
-    }
-
-    /**
-     * parse attributes
-     *
-     * @param gemEntity gem to fill
-     * @param gemElement gem node to parse
-     * @throws DOMException
-     */
-    public void parseAttributes(Gem gemEntity, Node gemElement) throws DOMException {
-        gemEntity.setName(gemElement.getAttributes().getNamedItem(NAME.toString()).getNodeValue());
-        gemEntity.setPreciousness(Boolean.parseBoolean(gemElement.getAttributes().getNamedItem(PREC.toString()).getNodeValue()));
-    }
-
-    /**
-     * parse tags from gem
-     *
-     * @param nodeList list of tags
-     * @param gemEntity gem to fill
-     * @throws NumberFormatException
-     * @throws DOMException
-     */
-    public void parseTags(NodeList nodeList, Gem gemEntity) throws NumberFormatException, DOMException {
-        VisualParameters vis;
-        for (int j = 0; j < nodeList.getLength(); j++) {
-            Node inGemItem = nodeList.item(j);
-
-            if (inGemItem.getNodeName().equals(ORIGIN.toString())) {
-                gemEntity.setOrigin(inGemItem.getTextContent());
-            }
-            if (inGemItem.getNodeName().equals(VALUE.toString())) {
-                gemEntity.setValue(Double.parseDouble(inGemItem.getTextContent()));
-            }
-
-            if (inGemItem.getNodeName().equals(VIS.toString())) {
-                NodeList visualParameters = inGemItem.getChildNodes();
-                vis = new VisualParameters();
-
-                parseVisualParameters(visualParameters, vis);
-
-                gemEntity.setVisualParameters(vis);
+        for (int i = 0; i < diff.getLength(); i++) {
+            if ("constructor-arg".equals(diff.item(i).getNodeName())) {
+                beanEntity.addConstructorArgs(parseParameter(diff.item(i)));
+            } else if ("property".equals(diff.item(i).getNodeName())) {
+                beanEntity.addParameter(parseParameterName(diff.item(i)), parseParameter(diff.item(i)));
+            } else {
+                throw new RuntimeException("unknown entity");
             }
         }
+
+        list.add(beanEntity);
     }
 
     /**
-     * parse visual parameters
      *
-     * @param visualParameters - nodelist of visual parameters
-     * @param vis object of visual parameters
-     * @throws DOMException
-     * @throws NumberFormatException
+     * @param node
+     * @return
      */
-    public void parseVisualParameters(NodeList visualParameters, VisualParameters vis) throws DOMException, NumberFormatException {
-        for (int k = 0; k < visualParameters.getLength(); k++) {
-            Node inVisualParameters = visualParameters.item(k);
-            if (inVisualParameters.getNodeName().equals(COLOR.toString())) {
-                vis.setColor(inVisualParameters.getTextContent());
-            }
-            if (inVisualParameters.getNodeName().equals(TRANSP.toString())) {
-                vis.setTransparency(Double.parseDouble(inVisualParameters.getTextContent()));
-            }
-            if (inVisualParameters.getNodeName().equals(SIDES.toString())) {
-                vis.setSides(Integer.parseInt(inVisualParameters.getTextContent()));
-            }
-        }
+    private Object parseParameter(Node node) {
+        return null;
     }
+
+    /**
+     *
+     * @param node
+     * @return
+     */
+    private String parseParameterName(Node node) {
+        return node.getAttributes().getNamedItem("name").getNodeValue();
+    }
+
 }

@@ -1,4 +1,67 @@
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.springframework.org/schema/beans" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema attributeFormDefault="unqualified" 
+           elementFormDefault="qualified" 
+           targetNamespace="http://www.springframework.org/schema/beans" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+    <xs:simpleType name="itemType1">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="byte"/>
+            <xs:enumeration value="short"/>
+            <xs:enumeration value="integer"/>
+            <xs:enumeration value="long"/>
+            <xs:enumeration value="float"/>
+            <xs:enumeration value="double"/>
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="custom"/>
+        </xs:restriction>
+    </xs:simpleType>
+  
+  
+  
+  
+    <xs:element name="beans">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="bean" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="constructor-arg" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:attribute type="xs:string" name="itemType" type="itemType1"/>
+                                    <xs:attribute type="xs:string" name="value" use="optional"/>
+                                    <xs:attribute type="xs:string" name="ref" use="optional"/>
+                    
+                  
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="property" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute type="xs:string" name="name" use="optional"/>
+                                            <xs:attribute type="xs:string" name="itemType" use="optional"/>
+                                            <xs:attribute type="xs:string" name="value" use="optional"/>
+                                            <xs:attribute type="xs:string" name="ref" use="optional"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="id" use="optional"/>
+                        <xs:attribute type="xs:string" name="class" use="optional"/>
+                        <xs:attribute type="xs:string" name="beanType" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+
+<xs:schema id="mySpring"
+           attributeFormDefault="unqualified" 
+           elementFormDefault="qualified" 
+           targetNamespace="./mySpringConfigSchema" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="beans">
         <xs:complexType>
             <xs:sequence>
@@ -9,8 +72,27 @@
                                 <xs:complexType>
                                     <xs:simpleContent>
                                         <xs:extension base="xs:string">
-                                            <xs:attribute type="xs:string" name="value" />
-                                            <xs:attribute type="xs:string" name="ref" />
+                                            <xs:attribute type="xs:string" name="itemType" >
+                        
+                                                <xs:restriction base="xs:string">
+                                                    <xs:enumeration value="byte"/>
+                                                    <xs:enumeration value="short"/>
+                                                    <xs:enumeration value="integer"/>
+                                                    <xs:enumeration value="long"/>
+                                                    <xs:enumeration value="float"/>
+                                                    <xs:enumeration value="double"/>
+                                                    <xs:enumeration value="string"/>
+                                                    <xs:enumeration value="custom"/>
+                                                </xs:restriction>
+                         
+                                            </xs:attribute>
+                                            <xs:attribute type="xs:string" name="value" use="optional">
+                                            </xs:attribute>
+                                            <xs:attribute type="xs:string" name="ref" use="optional">
+                                                <xs:restriction base="xs:string">
+                                                    <xs:pattern value="([A-Z]+[a-z0-9]*)*"/>
+                                                </xs:restriction>
+                                            </xs:attribute>
                                         </xs:extension>
                                     </xs:simpleContent>
                                 </xs:complexType>
@@ -19,40 +101,62 @@
                                 <xs:complexType>
                                     <xs:simpleContent>
                                         <xs:extension base="xs:string">
-                                            <xs:attribute type="xs:string" name="name" />
-                                            <xs:simpleType>
-                                                <xs:restriction base="xs:string">
-                                                    <xs:pattern value="[a-z]+([A-Z][a-z0-9]*)*"/>
-                                                </xs:restriction>
-                                            </xs:simpleType>
-                                            <xs:attribute type="xs:string" name="value" />
-                                            <xs:attribute type="xs:string" name="ref" />
+                                            <xs:attribute type="xs:string" name="name" >
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:pattern value="[a-z]+(0-9)*([A-Z][a-z0-9]*)*"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:attribute>
+                                            <xs:attribute type="xs:string" name="itemType" >
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:enumeration value="byte"/>
+                                                        <xs:enumeration value="short"/>
+                                                        <xs:enumeration value="integer"/>
+                                                        <xs:enumeration value="long"/>
+                                                        <xs:enumeration value="float"/>
+                                                        <xs:enumeration value="double"/>
+                                                        <xs:enumeration value="string"/>
+                                                        <xs:enumeration value="custom"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                        
+
+                                            </xs:attribute>
+                                            <xs:attribute type="xs:string" name="value" use="optional">
+
+                                            </xs:attribute>
+                                            <xs:attribute type="xs:string" name="ref" use="optional">
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:pattern value="([A-Z]+[a-z0-9]*)*"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+
+                                            </xs:attribute>
                                         </xs:extension>
                                     </xs:simpleContent>
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
                         <xs:attribute type="xs:string" name="id" >
-                            <xs:simpleType>
-                                <xs:restriction base="xs:string">
-                                    <xs:pattern value="[A-Z]([a-z0-9])+"/>
-                                </xs:restriction>
-                            </xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:pattern value="([A-Z]+[a-z0-9]*)*"/>
+                            </xs:restriction>
                         </xs:attribute>
                         <xs:attribute type="xs:string" name="class" >
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
-                                    <xs:pattern value="([a-z]+\.)*([A-Z]([a-z0-9])+){1}"/>
+                                    <xs:pattern value="([a-z]+\.)*(([A-Z]+[a-z0-9])*)"/>
                                 </xs:restriction>
                             </xs:simpleType>
                         </xs:attribute>
-                        <xs:attribute type="xs:string" name="type" >
-                            <xs:simpleType>
-                                <xs:restriction base="xs:string">
-                                    <xs:enumeration value="singleton"/>
-                                    <xs:enumeration value="common"/>
-                                </xs:restriction>
-                            </xs:simpleType>
+                        <xs:attribute type="xs:string" name="beanType" use="optional">
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="singleton"/>
+                                <xs:enumeration value="common"/>
+                            </xs:restriction>
                         </xs:attribute>
                     </xs:complexType>
                 </xs:element>
