@@ -5,10 +5,7 @@
  */
 package com.epam.training.taranovski.spring.core;
 
-import com.epam.training.taranovski.spring.core.parsers.MyDomParser;
 import com.epam.training.taranovski.spring.core.parsers.MyParser;
-import com.epam.training.taranovski.spring.core.parsers.MySaxParser;
-import com.epam.training.taranovski.spring.core.parsers.MyStaxParser;
 import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
 
 /**
@@ -17,9 +14,10 @@ import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
  */
 public class GenericXmlApplicationContext {
 
-    private final XmlBeanDefinitionReader reader;
+    private XmlBeanDefinitionReader reader;
     private MyParser parser;
     private String mySpringXMLConfigFile;
+    private ParserTypes parserType;
 
     /**
      *
@@ -34,20 +32,7 @@ public class GenericXmlApplicationContext {
      * @param parserType
      */
     public void setParserType(ParserTypes parserType) {
-        switch (parserType) {
-            case DOM: {
-                parser = new MyDomParser();
-                break;
-            }
-            case SAX: {
-                parser = new MySaxParser();
-                break;
-            }
-            case StAX: {
-                parser = new MyStaxParser();
-                break;
-            }
-        }
+        this.parserType = parserType;
     }
 
     /**
@@ -63,7 +48,10 @@ public class GenericXmlApplicationContext {
      * @return
      */
     public BeanFactory getBeanFactory() {
-        return null;
+
+        reader = new XmlBeanDefinitionReader();
+        return reader.getBeanFactory();
     }
 //- создает и возвращает экземпляр BeanFactory, в котором хранится ссылка на объектное представление конфигурационного xml-файла
+
 }

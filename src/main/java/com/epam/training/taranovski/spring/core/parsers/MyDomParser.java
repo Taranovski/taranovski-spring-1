@@ -8,12 +8,13 @@ import com.epam.training.taranovski.spring.core.Bean;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -24,39 +25,47 @@ import org.xml.sax.SAXException;
  */
 public class MyDomParser implements MyParser {
 
-    List<Bean> list = new LinkedList();
+    private boolean validating;
+    private String fileName;
+
+    private DocumentBuilderFactory dbf;
+    private DocumentBuilder db;
+    private Document document;
 
     /**
-     * get list of gems
      *
-     * @return list of gems
+     * @param fileName
      */
-    public List<Bean> getList() {
-        return list;
+    public MyDomParser(String fileName) {
+        this.fileName = fileName;
+        //create new document builder factory
+        dbf = DocumentBuilderFactory.newInstance();
+        
+        try {
+            //creating new document builder
+            db = dbf.newDocumentBuilder();
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     /**
      * parse function
      *
-     * @param fileName file to parse
+     * @return
      */
     @Override
-    public void parse(String fileName) {
+    public List<Bean> parse() {
         try {
-            //create new document builder factory
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            //creating new document builder
-            DocumentBuilder db = dbf.newDocumentBuilder();
             //creating new document
-            Document document = db.parse(fileName);
-            //defining root element
-            Element root = document.getDocumentElement();
-            //next function for parsing objects from list
-            parseBeans(root.getChildNodes());
-
-        } catch (IOException | ParserConfigurationException | SAXException ex) {
-            ex.printStackTrace();
+            document = db.parse(fileName);
+        } catch (SAXException | IOException ex) {
+            Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        return parseBeans(document.getDocumentElement().getChildNodes());
+
     }
 
     /**
@@ -64,25 +73,27 @@ public class MyDomParser implements MyParser {
      *
      * @param beans node list of beans
      */
-    private void parseBeans(NodeList beans) {
-
+    private List<Bean> parseBeans(NodeList beans) {
+        List<Bean> list1 = new LinkedList<>();
         for (int i = 0; i < beans.getLength(); i++) {
-            Node gemItem = beans.item(i);
-            if ("bean".equals(gemItem.getNodeName())) {
-                parseBean(gemItem);
+            Node beanItem = beans.item(i);
+            if ("bean".equals(beanItem.getNodeName())) {
+                list1.add(parseBean(beanItem));
             }
         }
+        return list1;
     }
 
     /**
      * parse one bean
      *
-     * @param gemItem bean to parse
+     * @param beanItem
+     * @return
      * @throws NumberFormatException
      * @throws DOMException
      */
-    public void parseBean(Node gemItem) throws NumberFormatException, DOMException {
-        Node beanElement = gemItem;
+    private Bean parseBean(Node beanItem) throws NumberFormatException, DOMException {
+        Node beanElement = beanItem;
         Bean beanEntity = new Bean();
 
         beanEntity.setBeadId(beanElement.getAttributes().getNamedItem("id").getNodeValue());
@@ -100,7 +111,7 @@ public class MyDomParser implements MyParser {
             }
         }
 
-        list.add(beanEntity);
+        return beanEntity;
     }
 
     /**
@@ -119,6 +130,20 @@ public class MyDomParser implements MyParser {
      */
     private String parseParameterName(Node node) {
         return node.getAttributes().getNamedItem("name").getNodeValue();
+    }
+
+    /**
+     * @return the validating
+     */
+    public boolean isValidating() {
+        return validating;
+    }
+
+    /**
+     * @param validating the validating to set
+     */
+    public void setValidating(boolean validating) {
+        this.validating = validating;
     }
 
 }
