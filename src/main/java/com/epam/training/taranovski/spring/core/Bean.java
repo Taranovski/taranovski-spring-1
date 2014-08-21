@@ -20,7 +20,6 @@ public class Bean {
 
     private String beadId;
     private String className;
-    private Class beanInterface;
     private Class beanClass;
 
     private boolean singleton = false;
@@ -120,18 +119,9 @@ public class Bean {
 
     /**
      *
-     * @return
+     * @param singleton
      */
-    public Class getBeanInterface() {
-        return beanInterface;
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
     }
-
-    /**
-     *
-     * @param beanInterface
-     */
-    public void setBeanInterface(Class beanInterface) {
-        this.beanInterface = beanInterface;
-    }
-
 }

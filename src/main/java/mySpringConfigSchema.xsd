@@ -1,6 +1,6 @@
 <xs:schema attributeFormDefault="unqualified" 
            elementFormDefault="qualified" 
-           targetNamespace="http://www.springframework.org/schema/beans" 
+           xmlns="" 
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
     <xs:simpleType name="itemType1">
@@ -22,7 +22,9 @@
     <xs:element name="beans">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="bean" maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="bean" 
+				maxOccurs="unbounded" 
+				minOccurs="0">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="constructor-arg" maxOccurs="unbounded" minOccurs="0">

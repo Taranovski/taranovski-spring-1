@@ -11,29 +11,22 @@ import com.epam.training.taranovski.spring.interfaces.SomeBean;
 /**
  *
  * @author Alyx
+ * @param <T>
  */
-public class GreetingServiceImpl implements GreetingService {
+public class GreetingServiceImpl<T extends SomeBean> implements GreetingService {
 
     private String someConstructorString;
-    private SomeBean someConstructorReference;
+    private T someConstructorReference;
 
     /**
      *
      * @param someConstructorString
      * @param someConstructorReference
      */
-    public GreetingServiceImpl(String someConstructorString, SomeBean someConstructorReference) {
+    public GreetingServiceImpl(String someConstructorString, T someConstructorReference) {
         this.someConstructorString = someConstructorString;
         this.someConstructorReference = someConstructorReference;
     }
-
-//    /**
-//     *
-//     * @param someConstructorString
-//     */
-//    public GreetingServiceImpl(String someConstructorString) {
-//        this.someConstructorString = someConstructorString;
-//    }
 
     /**
      *

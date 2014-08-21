@@ -29,40 +29,17 @@ public class MyDomParser implements MyBeansParser {
     private static MyDomParser instance;
 
     private static String fileName;
-    private static XmlBeanDefinitionReader backReference;
 
     private static DocumentBuilderFactory dbf;
     private static DocumentBuilder db;
     private static Document document;
 
-    public static MyDomParser getInstance(String fileName, XmlBeanDefinitionReader aThis) {
+    public static MyDomParser getInstance(String fileName) {
         if (instance == null) {
-            instance = new MyDomParser(fileName, aThis);
-            
+            instance = new MyDomParser(fileName);
+
         }
         return instance;
-    }
-
-    /**
-     *
-     * @param fileName
-     * @param aThis
-     */
-    private MyDomParser(String fileName, XmlBeanDefinitionReader aThis) {
-        MyDomParser.fileName = fileName;
-        backReference = aThis;
-        //create new document builder factory
-        dbf = DocumentBuilderFactory.newInstance();
-
-        try {
-            //creating new document builder
-            db = dbf.newDocumentBuilder();
-            document = db.parse(MyDomParser.fileName);
-            
-        } catch (SAXException | IOException | ParserConfigurationException ex) {
-            Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
     }
 
     /**
@@ -75,6 +52,25 @@ public class MyDomParser implements MyBeansParser {
     }
 
     /**
+     *
+     * @param fileName
+     * @param aThis
+     */
+    private MyDomParser(String fileName) {
+        MyDomParser.fileName = fileName;
+        //create new document builder factory
+        dbf = DocumentBuilderFactory.newInstance();
+        try {
+            //creating new document builder
+            db = dbf.newDocumentBuilder();
+            document = db.parse(MyDomParser.fileName);
+        } catch (SAXException | IOException | ParserConfigurationException ex) {
+            Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    /**
      * parse a list of beans
      *
      * @param beans node list of beans
@@ -82,12 +78,10 @@ public class MyDomParser implements MyBeansParser {
     private void parseBeans(NodeList beans) {
         for (int i = 0; i < beans.getLength(); i++) {
             Node beanItem = beans.item(i);
-            Bean bean = null;
             if ("bean".equals(beanItem.getNodeName())) {
                 BeanFactoryImpl.getInstance().addBean(parseBean(beanItem));
             }
         }
-
     }
 
     /**
@@ -98,17 +92,13 @@ public class MyDomParser implements MyBeansParser {
      * @throws NumberFormatException
      * @throws DOMException
      */
-    private Bean parseBean(Node beanItem) throws NumberFormatException, DOMException {
+    private Bean parseBean(Node beanItem) {
         Node beanElement = beanItem;
         Bean beanEntity = new Bean();
 
         beanEntity.setBeadId(beanElement.getAttributes().getNamedItem("id").getNodeValue());
         beanEntity.setClassName(beanElement.getAttributes().getNamedItem("class").getNodeValue());
-        try {
-            beanEntity.setBeanInterface(Class.forName(beanElement.getAttributes().getNamedItem("interface").getNodeValue()));
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        beanEntity.setSingleton("singleton".equals(beanElement.getAttributes().getNamedItem("beanType").getNodeValue()));
 
         NodeList diff = beanElement.getChildNodes();
 
@@ -120,7 +110,6 @@ public class MyDomParser implements MyBeansParser {
                 beanEntity.addParameter(parseParameterName(diff.item(i)), parseParameter(diff.item(i)));
             }
         }
-        System.out.println("parsed " + beanEntity.getBeadId());
         return beanEntity;
     }
 
@@ -131,31 +120,31 @@ public class MyDomParser implements MyBeansParser {
      */
     private Object parseParameter(Node node) {
         String type = node.getAttributes().getNamedItem("itemType").getNodeValue();
+        String value = node.getAttributes().getNamedItem("value").getNodeValue();
         switch (type) {
             case "byte": {
-                return Byte.parseByte(node.getAttributes().getNamedItem("value").getNodeValue());
+                return Byte.parseByte(value);
             }
             case "short": {
-                return Short.parseShort(node.getAttributes().getNamedItem("value").getNodeValue());
+                return Short.parseShort(value);
             }
             case "integer": {
-                return Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
+                return Integer.parseInt(value);
             }
             case "long": {
-                return Long.parseLong(node.getAttributes().getNamedItem("value").getNodeValue());
+                return Long.parseLong(value);
             }
             case "float": {
-                return Float.parseFloat(node.getAttributes().getNamedItem("value").getNodeValue());
+                return Float.parseFloat(value);
             }
             case "double": {
-                return Double.parseDouble(node.getAttributes().getNamedItem("value").getNodeValue());
+                return Double.parseDouble(value);
             }
             case "char": {
-                String value = node.getAttributes().getNamedItem("value").getNodeValue();
                 return value.charAt(0);
             }
             case "string": {
-                return node.getAttributes().getNamedItem("value").getNodeValue();
+                return value;
             }
             case "custom": {
                 String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();

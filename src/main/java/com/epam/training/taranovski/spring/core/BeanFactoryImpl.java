@@ -6,6 +6,7 @@
 package com.epam.training.taranovski.spring.core;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -42,11 +43,6 @@ public class BeanFactoryImpl implements BeanFactory {
     private BeanFactoryImpl() {
         beanMap = new HashMap<>();
         singletoneMap = new HashMap<>();
-//        for (Bean bean : list) {
-//            beanMap.put(bean.getBeadId(), bean);
-//        }
-        //System.out.println(list);
-        
     }
 
     /**
@@ -58,58 +54,40 @@ public class BeanFactoryImpl implements BeanFactory {
     public Object getBean(String string) {
         Bean bean = beanMap.get(string);
         Class beanClass = bean.getBeanClass();
-
-        if (bean.isSingleton()) {
+        if (bean.isSingleton() & singletoneMap.containsKey(string)) {
             return singletoneMap.get(string);
         }
 
         Constructor constructor = null;
-        String parameterName = null;
-        Object parameterValue = null;
-        Class parameterClass = null;
-        Method setterMethod = null;
-
         Object ob = null;
 
         try {
             if (bean.getConstructorArgs().isEmpty()) {
                 ob = bean.getBeanClass().newInstance();
             } else {
-                Class[] constructorParameterTypes = new Class[bean.getConstructorArgs().size()];
-
-                System.out.println(constructorParameterTypes.length);
-                for (int i = 0; i < bean.getConstructorArgs().size(); i++) {
-                    System.out.println("i: " + i + " class: " + bean.getConstructorArgs().get(i).getClass());
-                    constructorParameterTypes[i] = bean.getConstructorArgs().get(i).getClass();
-                }
-                constructor = bean.getBeanClass().getConstructor(constructorParameterTypes);
+                constructor = bean.getBeanClass().getConstructors()[0];
                 ob = constructor.newInstance(bean.getConstructorArgs().toArray());
             }
 
             for (Map.Entry<String, Object> entry : bean.getParameters().entrySet()) {
-                parameterName = entry.getKey();
-                parameterValue = entry.getValue();
-                parameterClass = entry.getValue().getClass();
 
-                setterMethod = bean.getBeanClass().getDeclaredMethod("set"
-                        + parameterName.substring(0, 1).toUpperCase()
-                        + parameterName.substring(1),
-                        parameterClass);
-                setterMethod.invoke(ob, parameterValue);
+                Field field = bean.getBeanClass().getDeclaredField(entry.getKey());
+                field.setAccessible(true);
+                field.set(ob, entry.getValue());
             }
         } catch (InstantiationException |
-                NoSuchMethodException |
                 SecurityException |
                 IllegalAccessException |
                 IllegalArgumentException |
                 InvocationTargetException ex) {
             Logger.getLogger(Bean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchFieldException ex) {
+            Logger.getLogger(BeanFactoryImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         if (bean.isSingleton()) {
             singletoneMap.put(string, beanClass.cast(ob));
         }
-
         return beanClass.cast(ob);
     }
 

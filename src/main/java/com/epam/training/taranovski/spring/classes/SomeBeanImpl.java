@@ -32,10 +32,7 @@ public class SomeBeanImpl implements SomeBean {
      */
     @Override
     public void showMyContents() {
-        System.out.println("i am SomeBeanImpl, my contents are:");
-        System.out.println("constructorArgBean = " + constructorArgBean);
-        System.out.println("someProperty1 = " + someProperty1);
-        System.out.println("someProperty2 = " + someProperty2);
+        System.out.println(this);
     }
 
     /**

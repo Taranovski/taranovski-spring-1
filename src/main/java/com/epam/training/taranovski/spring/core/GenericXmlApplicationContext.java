@@ -34,11 +34,7 @@ public class GenericXmlApplicationContext {
         return instance;
     }
 
-    /**
-     *
-     */
-    private GenericXmlApplicationContext() {
-    }
+    
 
     /**
      *
@@ -54,17 +50,7 @@ public class GenericXmlApplicationContext {
         return instance;
     }
 
-    /**
-     *
-     * @param mySpringXMLConfigFile
-     * @param mySpringSchemaFile
-     */
-    private GenericXmlApplicationContext(String mySpringXMLConfigFile, String mySpringSchemaFile) {
-        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
-        GenericXmlApplicationContext.mySpringSchemaFile = mySpringSchemaFile;
-        validating = true;
-        validate();
-    }
+    
 
     /**
      *
@@ -82,20 +68,7 @@ public class GenericXmlApplicationContext {
         return instance;
     }
 
-    /**
-     *
-     * @param mySpringXMLConfigFile
-     * @param mySpringSchemaFile
-     * @param parserType
-     */
-    private GenericXmlApplicationContext(String mySpringXMLConfigFile,
-            String mySpringSchemaFile, ParserTypes parserType) {
-        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
-        GenericXmlApplicationContext.mySpringSchemaFile = mySpringSchemaFile;
-        validating = true;
-        validate();
-        GenericXmlApplicationContext.parserType = parserType;
-    }
+    
 
     /**
      * @param mySpringXMLConfigFile
@@ -109,13 +82,7 @@ public class GenericXmlApplicationContext {
         return instance;
     }
 
-    /**
-     *
-     * @param mySpringXMLConfigFile
-     */
-    private GenericXmlApplicationContext(String mySpringXMLConfigFile) {
-        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
-    }
+    
 
     /**
      *
@@ -162,10 +129,48 @@ public class GenericXmlApplicationContext {
         if (mySpringXMLConfigFile == null) {
             throw new RuntimeException("no config file specified");
         }
-        System.out.println(this);
-        System.out.println(reader);
         return BeanFactoryImpl.getInstance();
     }
 //- создает и возвращает экземпляр BeanFactory, в котором хранится ссылка на объектное представление конфигурационного xml-файла
 
+    /**
+     *
+     */
+    private GenericXmlApplicationContext() {
+    }
+    
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     */
+    private GenericXmlApplicationContext(String mySpringXMLConfigFile) {
+        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
+    }
+    
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     * @param mySpringSchemaFile
+     */
+    private GenericXmlApplicationContext(String mySpringXMLConfigFile, String mySpringSchemaFile) {
+        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        GenericXmlApplicationContext.mySpringSchemaFile = mySpringSchemaFile;
+        validating = true;
+        validate();
+    }
+    
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     * @param mySpringSchemaFile
+     * @param parserType
+     */
+    private GenericXmlApplicationContext(String mySpringXMLConfigFile,
+            String mySpringSchemaFile, ParserTypes parserType) {
+        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        GenericXmlApplicationContext.mySpringSchemaFile = mySpringSchemaFile;
+        validating = true;
+        validate();
+        GenericXmlApplicationContext.parserType = parserType;
+    }
 }

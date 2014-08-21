@@ -20,8 +20,7 @@ public class XmlBeanDefinitionReader {
     private static ParserTypes parserType;
     private static String mySpringXMLConfigFile;
     private static BeanFactory beanFactory;
-    private static MyBeansParser parser;
-    
+
     /**
      *
      * @param mySpringXMLConfigFile
@@ -58,18 +57,7 @@ public class XmlBeanDefinitionReader {
     private MyBeansParser getParser() {
         switch (parserType) {
             case DOM: {
-                if (parser == null) {
-                    parser = MyDomParser.getInstance(mySpringXMLConfigFile, this);
-                }
-                return parser;
-            }
-            case SAX: {
-                return MyDomParser.getInstance(mySpringXMLConfigFile, this);
-//                parser = new MySaxParser(mySpringXMLConfigFile);
-            }
-            case StAX: {
-                return MyDomParser.getInstance(mySpringXMLConfigFile, this);
-//                parser = new MyStaxParser(mySpringXMLConfigFile);
+                return MyDomParser.getInstance(mySpringXMLConfigFile);
             }
             default: {
                 return null;
@@ -85,5 +73,4 @@ public class XmlBeanDefinitionReader {
         return beanFactory;
     }
 
-    
 }

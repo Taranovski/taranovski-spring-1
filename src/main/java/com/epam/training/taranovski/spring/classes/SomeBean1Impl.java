@@ -20,7 +20,7 @@ public class SomeBean1Impl implements SomeBean1 {
      */
     @Override
     public void showMySelf() {
-        System.out.println("i am SomeBean1Impl, my someProperty3 = " + someProperty3);
+        System.out.println(this);
     }
 
     /**
