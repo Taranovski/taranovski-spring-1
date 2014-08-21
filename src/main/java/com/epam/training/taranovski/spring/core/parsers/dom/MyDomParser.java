@@ -120,31 +120,30 @@ public class MyDomParser implements MyBeansParser {
      */
     private Object parseParameter(Node node) {
         String type = node.getAttributes().getNamedItem("itemType").getNodeValue();
-        String value = node.getAttributes().getNamedItem("value").getNodeValue();
         switch (type) {
             case "byte": {
-                return Byte.parseByte(value);
+                return Byte.parseByte(node.getAttributes().getNamedItem("value").getNodeValue());
             }
             case "short": {
-                return Short.parseShort(value);
+                return Short.parseShort(node.getAttributes().getNamedItem("value").getNodeValue());
             }
             case "integer": {
-                return Integer.parseInt(value);
+                return Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
             }
             case "long": {
-                return Long.parseLong(value);
+                return Long.parseLong(node.getAttributes().getNamedItem("value").getNodeValue());
             }
             case "float": {
-                return Float.parseFloat(value);
+                return Float.parseFloat(node.getAttributes().getNamedItem("value").getNodeValue());
             }
             case "double": {
-                return Double.parseDouble(value);
+                return Double.parseDouble(node.getAttributes().getNamedItem("value").getNodeValue());
             }
             case "char": {
-                return value.charAt(0);
+                return node.getAttributes().getNamedItem("value").getNodeValue().charAt(0);
             }
             case "string": {
-                return value;
+                return node.getAttributes().getNamedItem("value").getNodeValue();
             }
             case "custom": {
                 String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();
