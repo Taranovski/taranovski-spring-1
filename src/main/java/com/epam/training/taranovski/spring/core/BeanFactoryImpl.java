@@ -20,13 +20,35 @@ import java.util.logging.Logger;
  */
 public class BeanFactoryImpl implements BeanFactory {
 
-    private Map<String, Bean> beanMap = new HashMap<>();
-    private Map<String, Object> singletoneMap = new HashMap<>();
+    private static Map<String, Bean> beanMap;
+    private static Map<String, Object> singletoneMap;
 
-    public BeanFactoryImpl(List<Bean> list) {
+    private static BeanFactoryImpl instance;
+
+    /**
+     *
+     * @param list
+     * @return
+     */
+    public static BeanFactoryImpl getInstance(List<Bean> list) {
+        if (instance == null) {
+            instance = new BeanFactoryImpl(list);
+        }
+        return instance;
+    }
+
+    /**
+     *
+     * @param list
+     */
+    private BeanFactoryImpl(List<Bean> list) {
+        beanMap = new HashMap<>();
+        singletoneMap = new HashMap<>();
         for (Bean bean : list) {
             beanMap.put(bean.getBeadId(), bean);
         }
+        //System.out.println(list);
+        
     }
 
     /**
@@ -57,7 +79,9 @@ public class BeanFactoryImpl implements BeanFactory {
             } else {
                 Class[] constructorParameterTypes = new Class[bean.getConstructorArgs().size()];
 
+                //System.out.println(constructorParameterTypes.length);
                 for (int i = 0; i < bean.getConstructorArgs().size(); i++) {
+                    //System.out.println("i: " + i);
                     constructorParameterTypes[i] = bean.getConstructorArgs().get(i).getClass();
                 }
                 constructor = bean.getBeanClass().getConstructor(constructorParameterTypes);
@@ -75,7 +99,7 @@ public class BeanFactoryImpl implements BeanFactory {
                         parameterClass);
                 setterMethod.invoke(ob, parameterValue);
             }
-        } catch (InstantiationException | 
+        } catch (InstantiationException |
                 NoSuchMethodException |
                 SecurityException |
                 IllegalAccessException |
@@ -99,9 +123,7 @@ public class BeanFactoryImpl implements BeanFactory {
      * @return
      */
     @Override
-    public <T> T
-            getBean(String string, Class<T> type
-            ) {
+    public <T> T getBean(String string, Class<T> type) {
         return (T) getBean(string);
     }
 

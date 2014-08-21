@@ -27,16 +27,16 @@ public class MySpringRunner {
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.setValidating(false);
         context.setParserType(ParserTypes.DOM);
-        context.load("mySpringConfig.xml");
+        context.load(".\\src\\main\\java\\mySpringConfig.xml");
 
         BeanFactory factory = context.getBeanFactory();
 
-        GreetingService greetingService = factory.getBean("greetingService", GreetingService.class);
+        GreetingService greetingService = factory.getBean("GreetingService", GreetingService.class);
         greetingService.sayHello();
         greetingService.showReferenceItem();
         System.out.println(greetingService);
 
-        GreetingService greetingService1 = factory.getBean("greetingService", GreetingService.class);
+        GreetingService greetingService1 = factory.getBean("GreetingService", GreetingService.class);
         greetingService1.sayHello();
         greetingService1.showReferenceItem();
         System.out.println(greetingService1);

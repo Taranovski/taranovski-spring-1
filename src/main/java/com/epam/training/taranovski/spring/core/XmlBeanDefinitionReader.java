@@ -15,18 +15,38 @@ import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
  */
 public class XmlBeanDefinitionReader {
 
-    private ParserTypes parserType;
-    private String mySpringXMLConfigFile;
-    private BeanFactory beanFactory;
+    private static XmlBeanDefinitionReader instance;
+
+    private static ParserTypes parserType;
+    private static String mySpringXMLConfigFile;
+    private static BeanFactory beanFactory;
+    private static MyBeansParser parser;
+    private static GenericXmlApplicationContext content;
 
     /**
      *
      * @param mySpringXMLConfigFile
      * @param parserType
+     * @param content
+     * @return
      */
-    public XmlBeanDefinitionReader(String mySpringXMLConfigFile, ParserTypes parserType) {
+    public static XmlBeanDefinitionReader getInstance(String mySpringXMLConfigFile, ParserTypes parserType, GenericXmlApplicationContext content) {
+        if (instance == null) {
+            instance = new XmlBeanDefinitionReader(mySpringXMLConfigFile, parserType, content);
+        }
+        return instance;
+    }
+
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     * @param parserType
+     * @param content
+     */
+    private XmlBeanDefinitionReader(String mySpringXMLConfigFile, ParserTypes parserType, GenericXmlApplicationContext content) {
         this.parserType = parserType;
         this.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        this.content = content;
     }
 
     /**
@@ -38,14 +58,17 @@ public class XmlBeanDefinitionReader {
     private MyBeansParser getParser() {
         switch (parserType) {
             case DOM: {
-                return new MyDomParser(mySpringXMLConfigFile, this);
+                if (parser == null) {
+                    parser = MyDomParser.getInstance(mySpringXMLConfigFile, this);
+                }
+                return parser;
             }
             case SAX: {
-                return new MyDomParser(mySpringXMLConfigFile, this);
+                return MyDomParser.getInstance(mySpringXMLConfigFile, this);
 //                parser = new MySaxParser(mySpringXMLConfigFile);
             }
             case StAX: {
-                return new MyDomParser(mySpringXMLConfigFile, this);
+                return MyDomParser.getInstance(mySpringXMLConfigFile, this);
 //                parser = new MyStaxParser(mySpringXMLConfigFile);
             }
             default: {
@@ -60,8 +83,16 @@ public class XmlBeanDefinitionReader {
      */
     public BeanFactory getBeanFactory() {
         if (beanFactory == null) {
-            beanFactory = new BeanFactoryImpl(getParser().parse());
+            beanFactory = BeanFactoryImpl.getInstance(getParser().parse());
         }
         return beanFactory;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public GenericXmlApplicationContext getContent() {
+        return content;
     }
 }

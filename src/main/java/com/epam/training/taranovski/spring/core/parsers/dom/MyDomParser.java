@@ -27,19 +27,30 @@ import org.xml.sax.SAXException;
  */
 public class MyDomParser implements MyBeansParser {
 
-    private String fileName;
-    XmlBeanDefinitionReader backReference;
+    private static MyDomParser instance;
 
-    private DocumentBuilderFactory dbf;
-    private DocumentBuilder db;
-    private Document document;
+    private static String fileName;
+    private static XmlBeanDefinitionReader backReference;
+
+    private static DocumentBuilderFactory dbf;
+    private static DocumentBuilder db;
+    private static Document document;
+
+    private static List<Bean> list;
+
+    public static MyDomParser getInstance(String fileName, XmlBeanDefinitionReader aThis) {
+        if (instance == null) {
+            instance = new MyDomParser(fileName, aThis);
+        }
+        return instance;
+    }
 
     /**
      *
      * @param fileName
      * @param aThis
      */
-    public MyDomParser(String fileName, XmlBeanDefinitionReader aThis) {
+    private MyDomParser(String fileName, XmlBeanDefinitionReader aThis) {
         this.fileName = fileName;
         backReference = aThis;
         //create new document builder factory
@@ -63,12 +74,18 @@ public class MyDomParser implements MyBeansParser {
     public List<Bean> parse() {
         try {
             //creating new document
-            document = db.parse(fileName);
+            if (document == null) {
+                document = db.parse(fileName);
+            }
         } catch (SAXException | IOException ex) {
             Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return parseBeans(document.getDocumentElement().getChildNodes());
+        if (list == null) {
+            list = parseBeans(document.getDocumentElement().getChildNodes());
+        }
+
+        return list;
 
     }
 
@@ -108,10 +125,9 @@ public class MyDomParser implements MyBeansParser {
         for (int i = 0; i < diff.getLength(); i++) {
             if ("constructor-arg".equals(diff.item(i).getNodeName())) {
                 beanEntity.addConstructorArgs(parseParameter(diff.item(i)));
-            } else if ("property".equals(diff.item(i).getNodeName())) {
+            }
+            if ("property".equals(diff.item(i).getNodeName())) {
                 beanEntity.addParameter(parseParameterName(diff.item(i)), parseParameter(diff.item(i)));
-            } else {
-                throw new RuntimeException("unknown entity");
             }
         }
 
@@ -151,10 +167,10 @@ public class MyDomParser implements MyBeansParser {
             case "string": {
                 return node.getAttributes().getNamedItem("value").getNodeValue();
             }
-            case "custom": {
-                String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();
-                return backReference.getBeanFactory().getBean(beanName);
-            }
+//            case "custom": {
+//                String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();
+//                return backReference.getContent().getBeanFactory().getBean(beanName);
+//            }
             default: {
                 return null;
             }

@@ -14,11 +14,11 @@ import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
  */
 public class GenericXmlApplicationContext {
 
-    private XmlBeanDefinitionReader reader;
-    private String mySpringXMLConfigFile;
-    private String mySpringSchemaFile;
-    private ParserTypes parserType = ParserTypes.DOM;
-    private boolean validating = false;
+    private static XmlBeanDefinitionReader reader;
+    private static String mySpringXMLConfigFile;
+    private static String mySpringSchemaFile;
+    private static ParserTypes parserType = ParserTypes.DOM;
+    private static boolean validating = false;
     
     public GenericXmlApplicationContext() {
     }
@@ -103,7 +103,7 @@ public class GenericXmlApplicationContext {
             throw new RuntimeException("no config file specified");
         }
         if (reader == null) {
-            reader = new XmlBeanDefinitionReader(mySpringXMLConfigFile, parserType);
+            reader = XmlBeanDefinitionReader.getInstance(mySpringXMLConfigFile, parserType, this);
         }
         return reader.getBeanFactory();
 

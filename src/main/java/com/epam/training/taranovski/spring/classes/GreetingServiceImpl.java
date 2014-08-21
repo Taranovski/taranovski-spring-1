@@ -31,6 +31,14 @@ public class GreetingServiceImpl implements GreetingService {
      *
      * @param someConstructorString
      */
+    public GreetingServiceImpl(String someConstructorString) {
+        this.someConstructorString = someConstructorString;
+    }
+
+    /**
+     *
+     * @param someConstructorString
+     */
     @Override
     public void setSomeConstructorString(String someConstructorString) {
         this.someConstructorString = someConstructorString;
