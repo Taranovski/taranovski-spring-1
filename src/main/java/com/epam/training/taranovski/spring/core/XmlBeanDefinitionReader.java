@@ -5,8 +5,8 @@
  */
 package com.epam.training.taranovski.spring.core;
 
-import com.epam.training.taranovski.spring.core.parsers.MyDomParser;
-import com.epam.training.taranovski.spring.core.parsers.MyParser;
+import com.epam.training.taranovski.spring.core.parsers.dom.MyDomParser;
+import com.epam.training.taranovski.spring.core.parsers.MyBeansParser;
 import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
 
 /**
@@ -21,21 +21,31 @@ public class XmlBeanDefinitionReader {
 
     /**
      *
+     * @param mySpringXMLConfigFile
+     * @param parserType
+     */
+    public XmlBeanDefinitionReader(String mySpringXMLConfigFile, ParserTypes parserType) {
+        this.parserType = parserType;
+        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
+    }
+
+    /**
+     *
      * @param parserType
      * @param mySpringXMLConfigFile
      * @return
      */
-    private MyParser getParser() {
+    private MyBeansParser getParser() {
         switch (parserType) {
             case DOM: {
-                return new MyDomParser(mySpringXMLConfigFile);
+                return new MyDomParser(mySpringXMLConfigFile, this);
             }
             case SAX: {
-                return new MyDomParser(mySpringXMLConfigFile);
+                return new MyDomParser(mySpringXMLConfigFile, this);
 //                parser = new MySaxParser(mySpringXMLConfigFile);
             }
             case StAX: {
-                return new MyDomParser(mySpringXMLConfigFile);
+                return new MyDomParser(mySpringXMLConfigFile, this);
 //                parser = new MyStaxParser(mySpringXMLConfigFile);
             }
             default: {
@@ -49,6 +59,9 @@ public class XmlBeanDefinitionReader {
      * @return
      */
     public BeanFactory getBeanFactory() {
-        return new BeanFactoryImpl();
+        if (beanFactory == null) {
+            beanFactory = new BeanFactoryImpl(getParser().parse());
+        }
+        return beanFactory;
     }
 }

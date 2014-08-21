@@ -7,13 +7,11 @@ package com.epam.training.taranovski.spring.interfaces;
 
 /**
  *
- * @author Alyx
+ * @author Oleksandr_Taranovsky
  */
-public interface GreetingService {
+public interface SomeBean {
 
-    public void sayHello();
+    void showMyContents();
 
-    public void showReferenceItem();
-
-    void setSomeConstructorString(String someConstructorString);
+    void changeSomeProperty1(String prop);
 }

@@ -2,9 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.epam.training.taranovski.spring.core.parsers;
+package com.epam.training.taranovski.spring.core.parsers.dom;
 
 import com.epam.training.taranovski.spring.core.Bean;
+import com.epam.training.taranovski.spring.core.XmlBeanDefinitionReader;
+import com.epam.training.taranovski.spring.core.parsers.MyBeansParser;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,10 +25,10 @@ import org.xml.sax.SAXException;
  *
  * @author Admin
  */
-public class MyDomParser implements MyParser {
+public class MyDomParser implements MyBeansParser {
 
-    private boolean validating;
     private String fileName;
+    XmlBeanDefinitionReader backReference;
 
     private DocumentBuilderFactory dbf;
     private DocumentBuilder db;
@@ -35,12 +37,14 @@ public class MyDomParser implements MyParser {
     /**
      *
      * @param fileName
+     * @param aThis
      */
-    public MyDomParser(String fileName) {
+    public MyDomParser(String fileName, XmlBeanDefinitionReader aThis) {
         this.fileName = fileName;
+        backReference = aThis;
         //create new document builder factory
         dbf = DocumentBuilderFactory.newInstance();
-        
+
         try {
             //creating new document builder
             db = dbf.newDocumentBuilder();
@@ -120,7 +124,41 @@ public class MyDomParser implements MyParser {
      * @return
      */
     private Object parseParameter(Node node) {
-        return null;
+        String type = node.getAttributes().getNamedItem("itemType").getNodeValue();
+        switch (type) {
+            case "byte": {
+                return Byte.parseByte(node.getAttributes().getNamedItem("value").getNodeValue());
+            }
+            case "short": {
+                return Short.parseShort(node.getAttributes().getNamedItem("value").getNodeValue());
+            }
+            case "integer": {
+                return Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
+            }
+            case "long": {
+                return Long.parseLong(node.getAttributes().getNamedItem("value").getNodeValue());
+            }
+            case "float": {
+                return Float.parseFloat(node.getAttributes().getNamedItem("value").getNodeValue());
+            }
+            case "double": {
+                return Double.parseDouble(node.getAttributes().getNamedItem("value").getNodeValue());
+            }
+            case "char": {
+                String value = node.getAttributes().getNamedItem("value").getNodeValue();
+                return value.charAt(0);
+            }
+            case "string": {
+                return node.getAttributes().getNamedItem("value").getNodeValue();
+            }
+            case "custom": {
+                String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();
+                return backReference.getBeanFactory().getBean(beanName);
+            }
+            default: {
+                return null;
+            }
+        }
     }
 
     /**
@@ -130,20 +168,6 @@ public class MyDomParser implements MyParser {
      */
     private String parseParameterName(Node node) {
         return node.getAttributes().getNamedItem("name").getNodeValue();
-    }
-
-    /**
-     * @return the validating
-     */
-    public boolean isValidating() {
-        return validating;
-    }
-
-    /**
-     * @param validating the validating to set
-     */
-    public void setValidating(boolean validating) {
-        this.validating = validating;
     }
 
 }

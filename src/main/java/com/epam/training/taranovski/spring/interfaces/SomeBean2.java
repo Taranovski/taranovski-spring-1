@@ -3,21 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.epam.training.taranovski.spring.core.parsers;
-
-import com.epam.training.taranovski.spring.core.Bean;
-import java.util.List;
+package com.epam.training.taranovski.spring.interfaces;
 
 /**
  *
  * @author Oleksandr_Taranovsky
  */
-public interface MyParser {
+public interface SomeBean2 {
 
-    /**
-     *
-     * @return
-     */
-    List<Bean> parse();
+    void showYourSelf();
+
+    void changePror(String prop);
 }

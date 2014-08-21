@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,12 @@ public class BeanFactoryImpl implements BeanFactory {
     private Map<String, Bean> beanMap = new HashMap<>();
     private Map<String, Object> singletoneMap = new HashMap<>();
 
+    public BeanFactoryImpl(List<Bean> list) {
+        for (Bean bean : list) {
+            beanMap.put(bean.getBeadId(), bean);
+        }
+    }
+
     /**
      *
      * @param string
@@ -30,15 +37,10 @@ public class BeanFactoryImpl implements BeanFactory {
     @Override
     public Object getBean(String string) {
         Bean bean = beanMap.get(string);
+        Class beanClass = bean.getBeanClass();
 
         if (bean.isSingleton()) {
             return singletoneMap.get(string);
-        }
-
-        Class[] constructorParameterTypes = new Class[bean.getConstructorArgs().size()];
-
-        for (int i = 0; i < bean.getConstructorArgs().size(); i++) {
-            constructorParameterTypes[i] = bean.getConstructorArgs().get(i).getClass();
         }
 
         Constructor constructor = null;
@@ -48,44 +50,45 @@ public class BeanFactoryImpl implements BeanFactory {
         Method setterMethod = null;
 
         Object ob = null;
+
         try {
-            constructor = bean.getBeanClass().getConstructor(constructorParameterTypes);
-            ob = constructor.newInstance(bean.getConstructorArgs().toArray());
+            if (bean.getConstructorArgs().isEmpty()) {
+                ob = bean.getBeanClass().newInstance();
+            } else {
+                Class[] constructorParameterTypes = new Class[bean.getConstructorArgs().size()];
+
+                for (int i = 0; i < bean.getConstructorArgs().size(); i++) {
+                    constructorParameterTypes[i] = bean.getConstructorArgs().get(i).getClass();
+                }
+                constructor = bean.getBeanClass().getConstructor(constructorParameterTypes);
+                ob = constructor.newInstance(bean.getConstructorArgs().toArray());
+            }
 
             for (Map.Entry<String, Object> entry : bean.getParameters().entrySet()) {
                 parameterName = entry.getKey();
                 parameterValue = entry.getValue();
                 parameterClass = entry.getValue().getClass();
 
-                try {
-                    setterMethod = bean.getBeanClass().getDeclaredMethod("set"
-                            + parameterName.substring(0, 1).toUpperCase()
-                            + parameterName.substring(1),
-                            parameterClass);
-                    setterMethod.invoke(ob, parameterValue);
-                } catch (NoSuchMethodException |
-                        SecurityException |
-                        IllegalAccessException |
-                        IllegalArgumentException |
-                        InvocationTargetException ex) {
-                    Logger.getLogger(Bean.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                setterMethod = bean.getBeanClass().getDeclaredMethod("set"
+                        + parameterName.substring(0, 1).toUpperCase()
+                        + parameterName.substring(1),
+                        parameterClass);
+                setterMethod.invoke(ob, parameterValue);
             }
-
-            if (bean.isSingleton()) {
-                singletoneMap.put(string, ob);
-            }
-
-        } catch (NoSuchMethodException |
+        } catch (InstantiationException | 
+                NoSuchMethodException |
                 SecurityException |
-                InstantiationException |
                 IllegalAccessException |
                 IllegalArgumentException |
                 InvocationTargetException ex) {
             Logger.getLogger(Bean.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return ob;
+        if (bean.isSingleton()) {
+            singletoneMap.put(string, beanClass.cast(ob));
+        }
+
+        return beanClass.cast(ob);
     }
 
     /**
@@ -96,7 +99,9 @@ public class BeanFactoryImpl implements BeanFactory {
      * @return
      */
     @Override
-    public <T> T getBean(String string, Class<T> type) {
+    public <T> T
+            getBean(String string, Class<T> type
+            ) {
         return (T) getBean(string);
     }
 

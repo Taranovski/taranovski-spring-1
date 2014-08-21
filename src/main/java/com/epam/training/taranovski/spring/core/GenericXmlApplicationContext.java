@@ -5,7 +5,7 @@
  */
 package com.epam.training.taranovski.spring.core;
 
-import com.epam.training.taranovski.spring.core.parsers.MyParser;
+import com.epam.training.taranovski.spring.core.parsers.MyXMLValidator;
 import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
 
 /**
@@ -15,15 +15,54 @@ import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
 public class GenericXmlApplicationContext {
 
     private XmlBeanDefinitionReader reader;
-    private MyParser parser;
     private String mySpringXMLConfigFile;
-    private ParserTypes parserType;
+    private String mySpringSchemaFile;
+    private ParserTypes parserType = ParserTypes.DOM;
+    private boolean validating = false;
+    
+    public GenericXmlApplicationContext() {
+    }
+
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     * @param mySpringSchemaFile
+     */
+    public GenericXmlApplicationContext(String mySpringXMLConfigFile, String mySpringSchemaFile) {
+        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        this.mySpringSchemaFile = mySpringSchemaFile;
+        validating = true;
+        validate();
+    }
+
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     * @param mySpringSchemaFile
+     * @param parserType
+     */
+    public GenericXmlApplicationContext(String mySpringXMLConfigFile, String mySpringSchemaFile, ParserTypes parserType) {
+        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        this.mySpringSchemaFile = mySpringSchemaFile;
+        validating = true;
+        validate();
+        this.parserType = parserType;
+    }
+
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     */
+    public GenericXmlApplicationContext(String mySpringXMLConfigFile) {
+        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
+    }
 
     /**
      *
      * @param validating
      */
     public void setValidating(boolean validating) {
+        this.validating = validating;
 
     }
 
@@ -41,6 +80,18 @@ public class GenericXmlApplicationContext {
      */
     public void load(String XMLFileLocation) {
         mySpringXMLConfigFile = XMLFileLocation;
+        validate();
+    }
+
+    /**
+     *
+     */
+    private void validate() {
+        if (validating) {
+            if (!MyXMLValidator.validate(mySpringXMLConfigFile, mySpringSchemaFile)) {
+                throw new RuntimeException("validation failed");
+            }
+        }
     }
 
     /**
@@ -48,9 +99,14 @@ public class GenericXmlApplicationContext {
      * @return
      */
     public BeanFactory getBeanFactory() {
-
-        reader = new XmlBeanDefinitionReader();
+        if (mySpringXMLConfigFile == null) {
+            throw new RuntimeException("no config file specified");
+        }
+        if (reader == null) {
+            reader = new XmlBeanDefinitionReader(mySpringXMLConfigFile, parserType);
+        }
         return reader.getBeanFactory();
+
     }
 //- создает и возвращает экземпляр BeanFactory, в котором хранится ссылка на объектное представление конфигурационного xml-файла
 

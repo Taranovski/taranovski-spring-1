@@ -3,17 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.epam.training.taranovski.spring.interfaces;
 
 /**
  *
- * @author Alyx
+ * @author Oleksandr_Taranovsky
  */
-public interface GreetingService {
-
-    public void sayHello();
-
-    public void showReferenceItem();
-
-    void setSomeConstructorString(String someConstructorString);
+public interface SomeBean1 {
+    void showMySelf();
+    void setSomeProp3(String newProp);
 }
