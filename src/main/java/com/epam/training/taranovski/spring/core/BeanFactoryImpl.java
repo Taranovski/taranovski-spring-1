@@ -9,7 +9,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,12 +26,11 @@ public class BeanFactoryImpl implements BeanFactory {
 
     /**
      *
-     * @param list
      * @return
      */
-    public static BeanFactoryImpl getInstance(List<Bean> list) {
+    public static BeanFactoryImpl getInstance() {
         if (instance == null) {
-            instance = new BeanFactoryImpl(list);
+            instance = new BeanFactoryImpl();
         }
         return instance;
     }
@@ -41,12 +39,12 @@ public class BeanFactoryImpl implements BeanFactory {
      *
      * @param list
      */
-    private BeanFactoryImpl(List<Bean> list) {
+    private BeanFactoryImpl() {
         beanMap = new HashMap<>();
         singletoneMap = new HashMap<>();
-        for (Bean bean : list) {
-            beanMap.put(bean.getBeadId(), bean);
-        }
+//        for (Bean bean : list) {
+//            beanMap.put(bean.getBeadId(), bean);
+//        }
         //System.out.println(list);
         
     }
@@ -79,9 +77,9 @@ public class BeanFactoryImpl implements BeanFactory {
             } else {
                 Class[] constructorParameterTypes = new Class[bean.getConstructorArgs().size()];
 
-                //System.out.println(constructorParameterTypes.length);
+                System.out.println(constructorParameterTypes.length);
                 for (int i = 0; i < bean.getConstructorArgs().size(); i++) {
-                    //System.out.println("i: " + i);
+                    System.out.println("i: " + i + " class: " + bean.getConstructorArgs().get(i).getClass());
                     constructorParameterTypes[i] = bean.getConstructorArgs().get(i).getClass();
                 }
                 constructor = bean.getBeanClass().getConstructor(constructorParameterTypes);
@@ -125,6 +123,15 @@ public class BeanFactoryImpl implements BeanFactory {
     @Override
     public <T> T getBean(String string, Class<T> type) {
         return (T) getBean(string);
+    }
+
+    /**
+     *
+     * @param bean
+     */
+    @Override
+    public void addBean(Bean bean) {
+        beanMap.put(bean.getBeadId(), bean);
     }
 
 }

@@ -5,9 +5,9 @@
  */
 package com.epam.training.taranovski.spring.core;
 
-import com.epam.training.taranovski.spring.core.parsers.dom.MyDomParser;
 import com.epam.training.taranovski.spring.core.parsers.MyBeansParser;
 import com.epam.training.taranovski.spring.core.parsers.ParserTypes;
+import com.epam.training.taranovski.spring.core.parsers.dom.MyDomParser;
 
 /**
  *
@@ -21,8 +21,7 @@ public class XmlBeanDefinitionReader {
     private static String mySpringXMLConfigFile;
     private static BeanFactory beanFactory;
     private static MyBeansParser parser;
-    private static GenericXmlApplicationContext content;
-
+    
     /**
      *
      * @param mySpringXMLConfigFile
@@ -44,9 +43,10 @@ public class XmlBeanDefinitionReader {
      * @param content
      */
     private XmlBeanDefinitionReader(String mySpringXMLConfigFile, ParserTypes parserType, GenericXmlApplicationContext content) {
-        this.parserType = parserType;
-        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
-        this.content = content;
+        XmlBeanDefinitionReader.parserType = parserType;
+        XmlBeanDefinitionReader.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        getParser().parse();
+
     }
 
     /**
@@ -82,17 +82,8 @@ public class XmlBeanDefinitionReader {
      * @return
      */
     public BeanFactory getBeanFactory() {
-        if (beanFactory == null) {
-            beanFactory = BeanFactoryImpl.getInstance(getParser().parse());
-        }
         return beanFactory;
     }
 
-    /**
-     *
-     * @return
-     */
-    public GenericXmlApplicationContext getContent() {
-        return content;
-    }
+    
 }

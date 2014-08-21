@@ -19,8 +19,39 @@ public class GenericXmlApplicationContext {
     private static String mySpringSchemaFile;
     private static ParserTypes parserType = ParserTypes.DOM;
     private static boolean validating = false;
-    
-    public GenericXmlApplicationContext() {
+
+    private static GenericXmlApplicationContext instance;
+
+    /**
+     *
+     * @return
+     */
+    public static GenericXmlApplicationContext getContext() {
+        if (instance == null) {
+            instance = new GenericXmlApplicationContext();
+            reader = XmlBeanDefinitionReader.getInstance(mySpringXMLConfigFile, parserType, instance);
+        }
+        return instance;
+    }
+
+    /**
+     *
+     */
+    private GenericXmlApplicationContext() {
+    }
+
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     * @param mySpringSchemaFile
+     * @return
+     */
+    public static GenericXmlApplicationContext getContext(String mySpringXMLConfigFile, String mySpringSchemaFile) {
+        if (instance == null) {
+            instance = new GenericXmlApplicationContext(mySpringXMLConfigFile, mySpringSchemaFile);
+            reader = XmlBeanDefinitionReader.getInstance(mySpringXMLConfigFile, parserType, instance);
+        }
+        return instance;
     }
 
     /**
@@ -28,9 +59,9 @@ public class GenericXmlApplicationContext {
      * @param mySpringXMLConfigFile
      * @param mySpringSchemaFile
      */
-    public GenericXmlApplicationContext(String mySpringXMLConfigFile, String mySpringSchemaFile) {
-        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
-        this.mySpringSchemaFile = mySpringSchemaFile;
+    private GenericXmlApplicationContext(String mySpringXMLConfigFile, String mySpringSchemaFile) {
+        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        GenericXmlApplicationContext.mySpringSchemaFile = mySpringSchemaFile;
         validating = true;
         validate();
     }
@@ -40,21 +71,50 @@ public class GenericXmlApplicationContext {
      * @param mySpringXMLConfigFile
      * @param mySpringSchemaFile
      * @param parserType
+     * @return
      */
-    public GenericXmlApplicationContext(String mySpringXMLConfigFile, String mySpringSchemaFile, ParserTypes parserType) {
-        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
-        this.mySpringSchemaFile = mySpringSchemaFile;
+    public static GenericXmlApplicationContext getContext(String mySpringXMLConfigFile,
+            String mySpringSchemaFile, ParserTypes parserType) {
+        if (instance == null) {
+            instance = new GenericXmlApplicationContext(mySpringXMLConfigFile, mySpringSchemaFile, parserType);
+            reader = XmlBeanDefinitionReader.getInstance(mySpringXMLConfigFile, parserType, instance);
+        }
+        return instance;
+    }
+
+    /**
+     *
+     * @param mySpringXMLConfigFile
+     * @param mySpringSchemaFile
+     * @param parserType
+     */
+    private GenericXmlApplicationContext(String mySpringXMLConfigFile,
+            String mySpringSchemaFile, ParserTypes parserType) {
+        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
+        GenericXmlApplicationContext.mySpringSchemaFile = mySpringSchemaFile;
         validating = true;
         validate();
-        this.parserType = parserType;
+        GenericXmlApplicationContext.parserType = parserType;
+    }
+
+    /**
+     * @param mySpringXMLConfigFile
+     * @return
+     */
+    public static GenericXmlApplicationContext getContext(String mySpringXMLConfigFile) {
+        if (instance == null) {
+            instance = new GenericXmlApplicationContext(mySpringXMLConfigFile);
+            reader = XmlBeanDefinitionReader.getInstance(mySpringXMLConfigFile, parserType, instance);
+        }
+        return instance;
     }
 
     /**
      *
      * @param mySpringXMLConfigFile
      */
-    public GenericXmlApplicationContext(String mySpringXMLConfigFile) {
-        this.mySpringXMLConfigFile = mySpringXMLConfigFile;
+    private GenericXmlApplicationContext(String mySpringXMLConfigFile) {
+        GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
     }
 
     /**
@@ -62,7 +122,7 @@ public class GenericXmlApplicationContext {
      * @param validating
      */
     public void setValidating(boolean validating) {
-        this.validating = validating;
+        GenericXmlApplicationContext.validating = validating;
 
     }
 
@@ -71,7 +131,7 @@ public class GenericXmlApplicationContext {
      * @param parserType
      */
     public void setParserType(ParserTypes parserType) {
-        this.parserType = parserType;
+        GenericXmlApplicationContext.parserType = parserType;
     }
 
     /**
@@ -102,11 +162,9 @@ public class GenericXmlApplicationContext {
         if (mySpringXMLConfigFile == null) {
             throw new RuntimeException("no config file specified");
         }
-        if (reader == null) {
-            reader = XmlBeanDefinitionReader.getInstance(mySpringXMLConfigFile, parserType, this);
-        }
-        return reader.getBeanFactory();
-
+        System.out.println(this);
+        System.out.println(reader);
+        return BeanFactoryImpl.getInstance();
     }
 //- создает и возвращает экземпляр BeanFactory, в котором хранится ссылка на объектное представление конфигурационного xml-файла
 

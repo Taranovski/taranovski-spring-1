@@ -24,10 +24,10 @@ public class MySpringRunner {
      * @param args
      */
     public static void main(String[] args) {
-        GenericXmlApplicationContext context = new GenericXmlApplicationContext();
-        context.setValidating(false);
-        context.setParserType(ParserTypes.DOM);
-        context.load(".\\src\\main\\java\\mySpringConfig.xml");
+        GenericXmlApplicationContext context = GenericXmlApplicationContext.getContext(".\\src\\main\\java\\mySpringConfig.xml");
+        //context.setValidating(false);
+        //context.setParserType(ParserTypes.DOM);
+        //context.load();
 
         BeanFactory factory = context.getBeanFactory();
 

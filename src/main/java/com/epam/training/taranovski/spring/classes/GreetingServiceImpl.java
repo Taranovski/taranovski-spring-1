@@ -27,13 +27,13 @@ public class GreetingServiceImpl implements GreetingService {
         this.someConstructorReference = someConstructorReference;
     }
 
-    /**
-     *
-     * @param someConstructorString
-     */
-    public GreetingServiceImpl(String someConstructorString) {
-        this.someConstructorString = someConstructorString;
-    }
+//    /**
+//     *
+//     * @param someConstructorString
+//     */
+//    public GreetingServiceImpl(String someConstructorString) {
+//        this.someConstructorString = someConstructorString;
+//    }
 
     /**
      *

@@ -28,4 +28,6 @@ public interface BeanFactory {
      */
     public <T extends Object> T getBean(String string, Class<T> type);
 //- создает экземпляр класса типа T прописанного в конфигурационном xml-файле по его id
+
+    public void addBean(Bean parseBean);
 }

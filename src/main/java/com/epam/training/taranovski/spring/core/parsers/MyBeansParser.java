@@ -6,9 +6,6 @@
 
 package com.epam.training.taranovski.spring.core.parsers;
 
-import com.epam.training.taranovski.spring.core.Bean;
-import java.util.List;
-
 /**
  *
  * @author Oleksandr_Taranovsky
@@ -17,7 +14,6 @@ public interface MyBeansParser {
 
     /**
      *
-     * @return
      */
-    List<Bean> parse();
+    void parse();
 }

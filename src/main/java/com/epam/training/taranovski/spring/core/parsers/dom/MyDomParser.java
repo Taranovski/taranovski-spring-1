@@ -5,11 +5,10 @@
 package com.epam.training.taranovski.spring.core.parsers.dom;
 
 import com.epam.training.taranovski.spring.core.Bean;
+import com.epam.training.taranovski.spring.core.BeanFactoryImpl;
 import com.epam.training.taranovski.spring.core.XmlBeanDefinitionReader;
 import com.epam.training.taranovski.spring.core.parsers.MyBeansParser;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -36,11 +35,10 @@ public class MyDomParser implements MyBeansParser {
     private static DocumentBuilder db;
     private static Document document;
 
-    private static List<Bean> list;
-
     public static MyDomParser getInstance(String fileName, XmlBeanDefinitionReader aThis) {
         if (instance == null) {
             instance = new MyDomParser(fileName, aThis);
+            
         }
         return instance;
     }
@@ -51,7 +49,7 @@ public class MyDomParser implements MyBeansParser {
      * @param aThis
      */
     private MyDomParser(String fileName, XmlBeanDefinitionReader aThis) {
-        this.fileName = fileName;
+        MyDomParser.fileName = fileName;
         backReference = aThis;
         //create new document builder factory
         dbf = DocumentBuilderFactory.newInstance();
@@ -59,7 +57,9 @@ public class MyDomParser implements MyBeansParser {
         try {
             //creating new document builder
             db = dbf.newDocumentBuilder();
-        } catch (ParserConfigurationException ex) {
+            document = db.parse(MyDomParser.fileName);
+            
+        } catch (SAXException | IOException | ParserConfigurationException ex) {
             Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -68,25 +68,10 @@ public class MyDomParser implements MyBeansParser {
     /**
      * parse function
      *
-     * @return
      */
     @Override
-    public List<Bean> parse() {
-        try {
-            //creating new document
-            if (document == null) {
-                document = db.parse(fileName);
-            }
-        } catch (SAXException | IOException ex) {
-            Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (list == null) {
-            list = parseBeans(document.getDocumentElement().getChildNodes());
-        }
-
-        return list;
-
+    public void parse() {
+        parseBeans(document.getDocumentElement().getChildNodes());
     }
 
     /**
@@ -94,15 +79,15 @@ public class MyDomParser implements MyBeansParser {
      *
      * @param beans node list of beans
      */
-    private List<Bean> parseBeans(NodeList beans) {
-        List<Bean> list1 = new LinkedList<>();
+    private void parseBeans(NodeList beans) {
         for (int i = 0; i < beans.getLength(); i++) {
             Node beanItem = beans.item(i);
+            Bean bean = null;
             if ("bean".equals(beanItem.getNodeName())) {
-                list1.add(parseBean(beanItem));
+                BeanFactoryImpl.getInstance().addBean(parseBean(beanItem));
             }
         }
-        return list1;
+
     }
 
     /**
@@ -119,6 +104,11 @@ public class MyDomParser implements MyBeansParser {
 
         beanEntity.setBeadId(beanElement.getAttributes().getNamedItem("id").getNodeValue());
         beanEntity.setClassName(beanElement.getAttributes().getNamedItem("class").getNodeValue());
+        try {
+            beanEntity.setBeanInterface(Class.forName(beanElement.getAttributes().getNamedItem("interface").getNodeValue()));
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MyDomParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         NodeList diff = beanElement.getChildNodes();
 
@@ -130,7 +120,7 @@ public class MyDomParser implements MyBeansParser {
                 beanEntity.addParameter(parseParameterName(diff.item(i)), parseParameter(diff.item(i)));
             }
         }
-
+        System.out.println("parsed " + beanEntity.getBeadId());
         return beanEntity;
     }
 
@@ -167,10 +157,10 @@ public class MyDomParser implements MyBeansParser {
             case "string": {
                 return node.getAttributes().getNamedItem("value").getNodeValue();
             }
-//            case "custom": {
-//                String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();
-//                return backReference.getContent().getBeanFactory().getBean(beanName);
-//            }
+            case "custom": {
+                String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();
+                return BeanFactoryImpl.getInstance().getBean(beanName);
+            }
             default: {
                 return null;
             }

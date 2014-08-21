@@ -6,6 +6,7 @@
 >
     <bean 
         id="SomeBean1" 
+        interface="com.epam.training.taranovski.spring.interfaces.SomeBean1"
         class="com.epam.training.taranovski.spring.classes.SomeBean1Impl" 
         beanType = "common">
         <property name="someProperty3" itemType="string" value="blah!!!" />
@@ -13,6 +14,7 @@
     
     <bean 
         id="SomeBean2" 
+        interface="com.epam.training.taranovski.spring.interfaces.SomeBean2"
         class="com.epam.training.taranovski.spring.classes.SomeBean2Impl" 
         beanType = "common">
         <property name="someProperty4" itemType="string" value="blah2" />
@@ -20,6 +22,7 @@
     
     <bean 
         id="SomeBean" 
+        interface="com.epam.training.taranovski.spring.interfaces.SomeBean"
         class="com.epam.training.taranovski.spring.classes.SomeBeanImpl" 
         beanType = "common">
         <constructor-arg itemType="custom" reference="SomeBean2" />
@@ -29,10 +32,11 @@
     
     <bean 
         id="GreetingService" 
+        interface="com.epam.training.taranovski.spring.interfaces.GreetingService"
         class="com.epam.training.taranovski.spring.classes.GreetingServiceImpl" 
         beanType="singleton" >
         <constructor-arg itemType="string" value="Hello World!" />
-        <!--constructor-arg itemType="custom" reference="SomeBean" /-->
+        <constructor-arg itemType="custom" reference="SomeBean" />
     </bean>
 
 </beans>
