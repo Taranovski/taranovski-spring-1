@@ -6,7 +6,6 @@ package com.epam.training.taranovski.spring.core.parsers.dom;
 
 import com.epam.training.taranovski.spring.core.Bean;
 import com.epam.training.taranovski.spring.core.BeanFactoryImpl;
-import com.epam.training.taranovski.spring.core.XmlBeanDefinitionReader;
 import com.epam.training.taranovski.spring.core.parsers.MyBeansParser;
 import java.io.IOException;
 import java.util.logging.Level;
