@@ -7,32 +7,32 @@
     <bean 
         id="SomeBean1" 
         class="com.epam.training.taranovski.spring.classes.SomeBean1Impl" 
-        beanType = "common">
-        <property name="someProperty3" itemType="string" value="blah!!!" />
+    >
+        <property name="someProperty3" value="blah!!!" />
     </bean>
     
     <bean 
         id="SomeBean2" 
         class="com.epam.training.taranovski.spring.classes.SomeBean2Impl" 
-        beanType = "common">
-        <property name="someProperty4" itemType="string" value="blah2" />
+    >
+        <property name="someProperty4" value="blah2" />
     </bean>
     
     <bean 
         id="SomeBean" 
         class="com.epam.training.taranovski.spring.classes.SomeBeanImpl" 
-        beanType = "common">
-        <constructor-arg itemType="custom" reference="SomeBean2" />
-        <property name="someProperty1" itemType="string" value="blah1" />
-        <property name="someProperty2" itemType="custom" reference="SomeBean1" />		
+    >
+        <constructor-arg ref="SomeBean2" />
+        <property name="someProperty1" value="blah1" />
+        <property name="someProperty2" ref="SomeBean1" />		
     </bean>
     
     <bean 
         id="GreetingService" 
         class="com.epam.training.taranovski.spring.classes.GreetingServiceImpl" 
-        beanType="singleton" >
-        <constructor-arg itemType="string" value="Hello World!" />
-        <constructor-arg itemType="custom" reference="SomeBean" />
+    >
+        <constructor-arg value="Hello World!" />
+        <constructor-arg ref="SomeBean" />
     </bean>
 
 </beans>

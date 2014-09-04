@@ -34,8 +34,6 @@ public class GenericXmlApplicationContext {
         return instance;
     }
 
-    
-
     /**
      *
      * @param mySpringXMLConfigFile
@@ -49,8 +47,6 @@ public class GenericXmlApplicationContext {
         }
         return instance;
     }
-
-    
 
     /**
      *
@@ -68,8 +64,6 @@ public class GenericXmlApplicationContext {
         return instance;
     }
 
-    
-
     /**
      * @param mySpringXMLConfigFile
      * @return
@@ -81,8 +75,6 @@ public class GenericXmlApplicationContext {
         }
         return instance;
     }
-
-    
 
     /**
      *
@@ -138,7 +130,7 @@ public class GenericXmlApplicationContext {
      */
     private GenericXmlApplicationContext() {
     }
-    
+
     /**
      *
      * @param mySpringXMLConfigFile
@@ -146,7 +138,7 @@ public class GenericXmlApplicationContext {
     private GenericXmlApplicationContext(String mySpringXMLConfigFile) {
         GenericXmlApplicationContext.mySpringXMLConfigFile = mySpringXMLConfigFile;
     }
-    
+
     /**
      *
      * @param mySpringXMLConfigFile
@@ -158,7 +150,7 @@ public class GenericXmlApplicationContext {
         validating = true;
         validate();
     }
-    
+
     /**
      *
      * @param mySpringXMLConfigFile
