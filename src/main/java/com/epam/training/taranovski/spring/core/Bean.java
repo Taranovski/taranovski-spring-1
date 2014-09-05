@@ -22,8 +22,6 @@ public class Bean {
     private String className;
     private Class beanClass;
 
-    private boolean singleton = false;
-
     private List<Object> constructorArgs;
     private Map<String, Object> parameters;
 
@@ -110,18 +108,4 @@ public class Bean {
         this.getParameters().put(name, value);
     }
 
-    /**
-     * @return the singleton
-     */
-    public boolean isSingleton() {
-        return singleton;
-    }
-
-    /**
-     *
-     * @param singleton
-     */
-    public void setSingleton(boolean singleton) {
-        this.singleton = singleton;
-    }
 }

@@ -97,7 +97,6 @@ public class MyDomParser implements MyBeansParser {
 
         beanEntity.setBeadId(beanElement.getAttributes().getNamedItem("id").getNodeValue());
         beanEntity.setClassName(beanElement.getAttributes().getNamedItem("class").getNodeValue());
-        beanEntity.setSingleton("singleton".equals(beanElement.getAttributes().getNamedItem("beanType").getNodeValue()));
 
         NodeList diff = beanElement.getChildNodes();
 
@@ -118,40 +117,24 @@ public class MyDomParser implements MyBeansParser {
      * @return
      */
     private Object parseParameter(Node node) {
-        String type = node.getAttributes().getNamedItem("itemType").getNodeValue();
-        switch (type) {
-            case "byte": {
-                return Byte.parseByte(node.getAttributes().getNamedItem("value").getNodeValue());
-            }
-            case "short": {
-                return Short.parseShort(node.getAttributes().getNamedItem("value").getNodeValue());
-            }
-            case "integer": {
-                return Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
-            }
-            case "long": {
-                return Long.parseLong(node.getAttributes().getNamedItem("value").getNodeValue());
-            }
-            case "float": {
-                return Float.parseFloat(node.getAttributes().getNamedItem("value").getNodeValue());
-            }
-            case "double": {
-                return Double.parseDouble(node.getAttributes().getNamedItem("value").getNodeValue());
-            }
-            case "char": {
-                return node.getAttributes().getNamedItem("value").getNodeValue().charAt(0);
-            }
-            case "string": {
-                return node.getAttributes().getNamedItem("value").getNodeValue();
-            }
-            case "custom": {
-                String beanName = node.getAttributes().getNamedItem("reference").getNodeValue();
-                return BeanFactoryImpl.getInstance().getBean(beanName);
-            }
-            default: {
-                return null;
-            }
+
+        Node valueNode = node.getAttributes().getNamedItem("value");
+        Node refNode = node.getAttributes().getNamedItem("ref");
+
+        if (valueNode != null & refNode != null) {
+            throw new RuntimeException("error in xml bean definition");
         }
+
+        if (valueNode != null) {
+            String value = valueNode.getNodeValue();
+            return value;
+        }
+
+        if (refNode != null) {
+            String beanName = refNode.getNodeValue();
+            return BeanFactoryImpl.getInstance().getBean(beanName);
+        }
+        return null;
     }
 
     /**

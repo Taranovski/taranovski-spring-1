@@ -39,18 +39,20 @@ public class GreetingServiceImpl<T extends SomeBean> implements GreetingService 
 
     /**
      *
+     * @return 
      */
     @Override
-    public void sayHello() {
-        System.out.println(someConstructorString);
+    public String sayHello() {
+        return someConstructorString;
     }
 
     /**
      *
+     * @return 
      */
     @Override
-    public void showReferenceItem() {
-        System.out.println(someConstructorReference);
+    public String showReferenceItem() {
+        return someConstructorReference.toString();
     }
 
     /**

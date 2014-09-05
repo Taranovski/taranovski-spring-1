@@ -11,7 +11,7 @@ package com.epam.training.taranovski.spring.interfaces;
  */
 public interface SomeBean2 {
 
-    void showYourSelf();
+    String showYourSelf();
 
     void changePror(String prop);
 }

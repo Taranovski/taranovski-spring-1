@@ -8,7 +8,6 @@ package com.epam.training.taranovski.spring.core;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -21,8 +20,7 @@ import java.util.logging.Logger;
 public class BeanFactoryImpl implements BeanFactory {
 
     private static Map<String, Bean> beanMap;
-    private static Map<String, Object> singletoneMap;
-
+    
     private static BeanFactoryImpl instance;
 
     /**
@@ -42,7 +40,7 @@ public class BeanFactoryImpl implements BeanFactory {
      */
     private BeanFactoryImpl() {
         beanMap = new HashMap<>();
-        singletoneMap = new HashMap<>();
+        
     }
 
     /**
@@ -54,10 +52,7 @@ public class BeanFactoryImpl implements BeanFactory {
     public Object getBean(String string) {
         Bean bean = beanMap.get(string);
         Class beanClass = bean.getBeanClass();
-        if (bean.isSingleton() & singletoneMap.containsKey(string)) {
-            return singletoneMap.get(string);
-        }
-
+        
         Constructor constructor = null;
         Object ob = null;
 
@@ -85,9 +80,6 @@ public class BeanFactoryImpl implements BeanFactory {
             Logger.getLogger(BeanFactoryImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        if (bean.isSingleton()) {
-            singletoneMap.put(string, beanClass.cast(ob));
-        }
         return beanClass.cast(ob);
     }
 

@@ -11,6 +11,6 @@ package com.epam.training.taranovski.spring.interfaces;
  * @author Oleksandr_Taranovsky
  */
 public interface SomeBean1 {
-    void showMySelf();
+    String showMySelf();
     void setSomeProp3(String newProp);
 }

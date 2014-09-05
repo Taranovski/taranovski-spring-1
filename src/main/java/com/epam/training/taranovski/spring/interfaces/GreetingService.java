@@ -11,9 +11,9 @@ package com.epam.training.taranovski.spring.interfaces;
  */
 public interface GreetingService {
 
-    public void sayHello();
+    public String sayHello();
 
-    public void showReferenceItem();
+    public String showReferenceItem();
 
     void setSomeConstructorString(String someConstructorString);
 }

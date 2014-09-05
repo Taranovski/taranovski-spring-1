@@ -29,10 +29,11 @@ public class SomeBeanImpl implements SomeBean {
 
     /**
      *
+     * @return 
      */
     @Override
-    public void showMyContents() {
-        System.out.println(this);
+    public String showMyContents() {
+        return this.toString();
     }
 
     /**

@@ -6,9 +6,11 @@ package newpackage;
  * and open the template in the editor.
  */
 import com.epam.training.taranovski.spring.core.BeanFactory;
-import com.epam.training.taranovski.spring.core.BeanFactoryImpl;
 import com.epam.training.taranovski.spring.core.GenericXmlApplicationContext;
 import com.epam.training.taranovski.spring.interfaces.GreetingService;
+import com.epam.training.taranovski.spring.interfaces.SomeBean;
+import com.epam.training.taranovski.spring.interfaces.SomeBean1;
+import com.epam.training.taranovski.spring.interfaces.SomeBean2;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,6 +23,9 @@ import static org.junit.Assert.*;
  * @author Alyx
  */
 public class NewEmptyJUnitTest {
+
+    GenericXmlApplicationContext context;
+    BeanFactory factory;
 
     public NewEmptyJUnitTest() {
     }
@@ -35,6 +40,8 @@ public class NewEmptyJUnitTest {
 
     @Before
     public void setUp() {
+        context = GenericXmlApplicationContext.getContext(".\\src\\main\\java\\mySpringConfig.xml");
+        factory = context.getBeanFactory();
     }
 
     @After
@@ -43,19 +50,34 @@ public class NewEmptyJUnitTest {
 
     @Test
     public void hello() {
-        GenericXmlApplicationContext context = GenericXmlApplicationContext.getContext(".\\src\\main\\java\\mySpringConfig.xml");
-        BeanFactory factory = BeanFactoryImpl.getInstance();
+        GreetingService greetingService = factory.getBean("GreetingService", GreetingService.class);
+
+        assertTrue("Hello World!".equals(greetingService.sayHello()));
+        
+        SomeBean someBean = factory.getBean("SomeBean", SomeBean.class);
+
+        assertTrue(someBean.toString().equals(greetingService.showReferenceItem()));
+
+    }
+
+    @Test
+    public void hello1() {
 
         GreetingService greetingService = factory.getBean("GreetingService", GreetingService.class);
         greetingService.sayHello();
         greetingService.showReferenceItem();
 
-        GreetingService greetingService1 = factory.getBean("GreetingService", GreetingService.class);
-        greetingService1.sayHello();
-        greetingService1.showReferenceItem();
-
-        greetingService1.setSomeConstructorString("i am a singleton!");
-        greetingService1.sayHello();
+        greetingService.setSomeConstructorString("i am a singleton!");
         greetingService.sayHello();
+
+        SomeBean someBean = factory.getBean("SomeBean", SomeBean.class);
+        someBean.showMyContents();
+
+        SomeBean1 someBean1 = factory.getBean("SomeBean1", SomeBean1.class);
+        someBean1.showMySelf();
+
+        SomeBean2 someBean2 = factory.getBean("SomeBean2", SomeBean2.class);
+        someBean2.showYourSelf();
     }
+
 }

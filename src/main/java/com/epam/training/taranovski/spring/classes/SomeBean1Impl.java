@@ -17,10 +17,11 @@ public class SomeBean1Impl implements SomeBean1 {
 
     /**
      *
+     * @return 
      */
     @Override
-    public void showMySelf() {
-        System.out.println(this);
+    public String showMySelf() {
+        return this.toString();
     }
 
     /**
